@@ -4,57 +4,29 @@ using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
+using PlaywrightDemoTests;
 
 namespace PlaywrightTests;
 
 [Parallelizable(ParallelScope.Self)]
 [TestFixture]
-public class ExampleTest : PageTest
+public class LoginTest : PageTest
 {
-	[Test]
-	public async Task HasTitle()
-	{
-		await Page.GotoAsync("https://playwright.dev");
-
-		// Expect a title "to contain" a substring.
-		await Expect(Page).ToHaveTitleAsync(new Regex("Playwright"));
-	}
 
 	[Test]
-	public async Task GetStartedLink()
+	public async Task InvalidLoginShowsError()
 	{
-		await Page.GotoAsync("https://playwright.dev");
+		var loginPage = new LoginPage(Page);
 
-		// Click the get started link.
-		await Page.GetByRole(AriaRole.Link, new() { Name = "Get started" }).ClickAsync();
+		const string invalidUsername = "wrong_username";
+		const string invalidPassword = "wrong_password";
 
-		// Expects page to have a heading with the name of Installation.
-		await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Installation" })).ToBeVisibleAsync();
-	}
+		await loginPage.NavigateAsync();
+		await Expect(Page).ToHaveURLAsync("https://www.saucedemo.com/");
 
-	[Test]
-	public async Task InvalidUsername()
-	{
-		await Page.GotoAsync("https://www.saucedemo.com/");
+		await loginPage.LoginAsync(invalidUsername, invalidPassword);
 
-		ILocator usernameInput = Page.Locator("[data-test='username']");
-
-		await usernameInput.FillAsync("standard_user");
-
-		ILocator passwordInput = Page.Locator("[data-test='password']");
-
-		await passwordInput.FillAsync("password");
-
-		ILocator loginButton = Page.Locator("[data-test='login-button']");
-
-		await loginButton.ClickAsync();
-
-		ILocator errorMessage = Page.Locator("[data-test='error']");
-
-		await Expect(errorMessage).ToContainTextAsync("Epic sadface: Username and password do not match any user in this service");
-
-
-
-
+        await Expect(loginPage.ErrorMessage).ToBeVisibleAsync();
+		await Expect(loginPage.ErrorMessage).ToContainTextAsync("Username and password do not match");
 	}
 }
