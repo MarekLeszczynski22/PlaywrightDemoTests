@@ -29,4 +29,19 @@ public class LoginTest : PageTest
         await Expect(loginPage.ErrorMessage).ToBeVisibleAsync();
 		await Expect(loginPage.ErrorMessage).ToContainTextAsync("Username and password do not match");
 	}
+
+	[Test]
+	public async Task ValidLoginNaviagtesToInventory()
+	{
+		var loginPage = new LoginPage(Page);
+		var inventoryPage = new InventoryPage(Page);
+
+		await loginPage.NavigateAsync();
+		await loginPage.LoginAsync("standard_user", "secret_sauce");
+
+		await inventoryPage.WaitForPageAsync();
+
+		await Expect(Page).ToHaveURLAsync(new Regex(".*inventory.html"));
+		Assert.That(await inventoryPage.IsLoadedAsync(), Is.True);
+	}
 }
