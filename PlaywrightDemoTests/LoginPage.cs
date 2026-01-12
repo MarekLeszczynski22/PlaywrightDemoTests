@@ -20,9 +20,9 @@ namespace PlaywrightDemoTests
 		public ILocator ErrorMessage => _page.Locator("[data-test='error']");
 
 
-		public async Task NavigateAsync()
+		public async Task NavigateAsync(string baseUrl)
 		{
-			await _page.GotoAsync("https://www.saucedemo.com/");
+			await _page.GotoAsync(baseUrl);
 		}
 
 		public async Task LoginAsync(string username, string password)

@@ -10,7 +10,7 @@ namespace PlaywrightTests;
 
 [Parallelizable(ParallelScope.Self)]
 [TestFixture]
-public class LoginTest : PageTest
+public class LoginTest : BaseTest
 {
 
 	[Test]
@@ -21,7 +21,7 @@ public class LoginTest : PageTest
 		const string invalidUsername = "wrong_username";
 		const string invalidPassword = "wrong_password";
 
-		await loginPage.NavigateAsync();
+		await loginPage.NavigateAsync(BaseUrl);
 		await Expect(Page).ToHaveURLAsync("https://www.saucedemo.com/");
 
 		await loginPage.LoginAsync(invalidUsername, invalidPassword);
@@ -36,7 +36,7 @@ public class LoginTest : PageTest
 		var loginPage = new LoginPage(Page);
 		var inventoryPage = new InventoryPage(Page);
 
-		await loginPage.NavigateAsync();
+		await loginPage.NavigateAsync(BaseUrl);
 		await loginPage.LoginAsync("standard_user", "secret_sauce");
 
 		await inventoryPage.WaitForPageAsync();
