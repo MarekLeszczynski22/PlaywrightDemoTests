@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Playwright.NUnit;
 using Microsoft.Testing.Platform.Configurations;
+using NUnit.Framework.Interfaces;
 
 public abstract class BaseTest : PageTest
 {
@@ -14,11 +15,17 @@ public abstract class BaseTest : PageTest
 		Config = new ConfigurationBuilder()
 			.AddJsonFile("appsettings.json")
 			.Build();
+
+		Page.SetDefaultTimeout(int.Parse(Config["Playwright:DefaultTimeout"] ?? "30000"));
 	}
 
 	[TearDown]
 	public async Task BaseTearDown()
 	{
-		await Task.CompletedTask;
+		if (TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Failed)
+		{
+			var fileName = $"{TestContext.CurrentContext.Test.Name}.png";
+			await Page.ScreenshotAsync(new() { Path = fileName });
+		}
 	}
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Playwright;
 
-namespace PlaywrightDemoTests
+namespace PlaywrightDemoTests.Pages
 {
     internal class LoginPage
     {
